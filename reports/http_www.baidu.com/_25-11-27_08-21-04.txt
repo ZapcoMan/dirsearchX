@@ -1,9 +1,0 @@
-# Dirsearch started Thu Nov 27 08:21:06 2025 as: .\dirsearchplus.py -z yes -u http://www.baidu.com --wordlists .\db\simple_dicc.txt
-
-301   234B   http://www.baidu.com/2002    -> REDIRECTS TO: http://www.baidu.com/2002/
-301   234B   http://www.baidu.com/2009    -> REDIRECTS TO: http://www.baidu.com/2009/
-301   234B   http://www.baidu.com/2005    -> REDIRECTS TO: http://www.baidu.com/2005/
-301   234B   http://www.baidu.com/2007    -> REDIRECTS TO: http://www.baidu.com/2007/
-301   234B   http://www.baidu.com/2004    -> REDIRECTS TO: http://www.baidu.com/2004/
-301   234B   http://www.baidu.com/2006    -> REDIRECTS TO: http://www.baidu.com/2006/
-301   234B   http://www.baidu.com/2008    -> REDIRECTS TO: http://www.baidu.com/2008/

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import re
-
+import time
 from colorama import init, Fore, Style
 
 import lib
@@ -159,12 +159,21 @@ def run_bypass403():
 def jsfind():
     import lib.JSFinder
     from lib.core.options import parse_options
+    from lib.view.terminal import output
+    from lib.view.colors import set_color
+    import time
+    # current_time = time.strftime("%H:%M:%S")
+    # message = f"[{current_time}] jsfind "
+    # output.new_line(set_color(message, fore="cyan"))
     if (parse_options()['jsfind']) == None:
         pass
     else:
         jsf="".join(parse_options()['jsfind'])
         if jsf=='yes':
-            print(Fore.GREEN + Style.BRIGHT+"开始JsFind！"+Style.RESET_ALL)
+            # print(Fore.GREEN + Style.BRIGHT+"开始JsFind！"+Style.RESET_ALL)
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}] 开始JsFind！"
+            output.new_line(set_color(message, fore="green", style="bright"))
             url="".join(parse_options()['urls'])
             urls = lib.JSFinder.find_by_url(url)
             lib.JSFinder.giveresult(urls, url)
@@ -344,7 +353,9 @@ def packer_fuzzer():
     import subprocess
     import time
     from lib.core.options import parse_options
-
+    current_time = time.strftime("%H:%M:%S")
+    message = f"[{current_time}] packer_fuzzer "
+    output.new_line(set_color(message, fore="cyan"))
     # 检查 -p/--packer-fuzzer 参数
     if (parse_options()['packer_fuzzer']) == None:
         return
@@ -366,7 +377,7 @@ def packer_fuzzer():
 
                 # 检查是否已经安装了 Packer-Fuzzer
                 # 更新路径为 script/Packer-Fuzzer
-                packer_fuzzer_base_dir = os.path.join(os.getcwd(), 'script')
+                packer_fuzzer_base_dir = os.path.join(os.getcwd(), 'lib')
                 packer_fuzzer_dir = os.path.join(packer_fuzzer_base_dir, 'Packer-Fuzzer')
 
                 if not os.path.exists(packer_fuzzer_dir):

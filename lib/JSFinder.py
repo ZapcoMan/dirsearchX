@@ -1,15 +1,14 @@
 import requests, argparse, sys, re,csv,os
 import urllib3
+import time
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from concurrent.futures import ThreadPoolExecutor
 
-from colorama import init, Fore, Style
-
-
-init()
+from lib.view.terminal import output
+from lib.view.colors import set_color
 
 # Regular expression comes from https://github.com/GerbenJavado/LinkFinder
 def extract_URL(JS):
@@ -25,23 +24,23 @@ def extract_URL(JS):
 	pattern_raw = r"""
 	  (?:"|')                               # Start newline delimiter
 	  (
-	    ((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
-	    [^"'/]{1,}\.                        # Match a domainname (any character + dot)
-	    [a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
-	    |
-	    ((?:/|\.\./|\./)                    # Start with /,../,./
-	    [^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be...
-	    [^"'><,;|()]{1,})                   # Rest of the characters can't be
-	    |
-	    ([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
-	    [a-zA-Z0-9_\-/]{1,}                 # Resource name
-	    \.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
-	    (?:[\?|/][^"|']{0,}|))              # ? mark with parameters
-	    |
-	    ([a-zA-Z0-9_\-]{1,}                 # filename
-	    \.(?:php|asp|aspx|jsp|json|
-	         action|html|js|txt|xml)             # . + extension
-	    (?:\?[^"|']{0,}|))                  # ? mark with parameters
+		((?:[a-zA-Z]{1,10}://|//)           # Match a scheme [a-Z]*1-10 or //
+		[^"'/]{1,}\.                        # Match a domainname (any character + dot)
+		[a-zA-Z]{2,}[^"']{0,})              # The domainextension and/or path
+		|
+		((?:/|\.\./|\./)                    # Start with /,../,./
+		[^"'><,;| *()(%%$^/\\\[\]]          # Next character can't be...
+		[^"'><,;|()]{1,})                   # Rest of the characters can't be
+		|
+		([a-zA-Z0-9_\-/]{1,}/               # Relative endpoint with /
+		[a-zA-Z0-9_\-/]{1,}                 # Resource name
+		\.(?:[a-zA-Z]{1,4}|action)          # Rest + extension (length 1-4 or action)
+		(?:[\?|/][^"|']{0,}|))              # ? mark with parameters
+		|
+		([a-zA-Z0-9_\-]{1,}                 # filename
+		\.(?:php|asp|aspx|jsp|json|
+			 action|html|js|txt|xml)             # . + extension
+		(?:\?[^"|']{0,}|))                  # ? mark with parameters
 	  )
 	  (?:"|')                               # End newline delimiter
 	"""
@@ -148,7 +147,9 @@ def find_by_url(url, js = False):
 			print("Please specify a URL like https://www.baidu.com")
 		html_raw = Extract_html(url)
 		if html_raw == None:
-			print("Fail to access " + url)
+			current_time = time.strftime("%H:%M:%S")
+			message = f"[{current_time}]  Fail to access " + url
+			output.error(message)
 			return None
 		#print(html_raw)
 		html = BeautifulSoup(html_raw, "html.parser")
@@ -227,7 +228,9 @@ def find_by_url_deep(url):
 	"""
 	html_raw = Extract_html(url)
 	if html_raw == None:
-		print("Fail to access " + url)
+		current_time = time.strftime("%H:%M:%S")
+		message = f"[{current_time}]  Fail to access " + url
+		output.error(message)
 		return None
 	html = BeautifulSoup(html_raw, "html.parser")
 	html_as = html.findAll("a")
@@ -239,13 +242,17 @@ def find_by_url_deep(url):
 		if link not in links:
 			links.append(link)
 	if links == []: return None
-	print("ALL Find " + str(len(links)) + " links")
+	current_time = time.strftime("%H:%M:%S")
+	message = f"[{current_time}]  ALL Find " + str(len(links)) + " links"
+	output.new_line(set_color(message, fore="green", style="bright"))
 	urls = []
 	i = len(links)
 	for link in links:
 		temp_urls = find_by_url(link)
 		if temp_urls == None: continue
-		print("Remaining " + str(i) + " | Find " + str(len(temp_urls)) + " URL in " + link)
+		current_time = time.strftime("%H:%M:%S")
+		message = f"[{current_time}]  Remaining " + str(i) + " | Find " + str(len(temp_urls)) + " URL in " + link
+		output.new_line(set_color(message, fore="green"))
 		for temp_url in temp_urls:
 			if temp_url not in urls:
 				urls.append(temp_url)
@@ -267,7 +274,9 @@ def find_by_file(file_path, js=False):
 	with open(file_path, "r") as fobject:
 		links = fobject.read().split("\n")
 	if links == []: return None
-	print("ALL Find " + str(len(links)) + " links")
+	current_time = time.strftime("%H:%M:%S")
+	message = f"[{current_time}]  ALL Find " + str(len(links)) + " links"
+	output.new_line(set_color(message, fore="green", style="bright"))
 	urls = []
 	i = len(links)
 	for link in links:
@@ -276,7 +285,9 @@ def find_by_file(file_path, js=False):
 		else:
 			temp_urls = find_by_url(link, js=True)
 		if temp_urls == None: continue
-		print(str(i) + " Find " + str(len(temp_urls)) + " URL in " + link)
+		current_time = time.strftime("%H:%M:%S")
+		message = f"[{current_time}]  " + str(i) + " Find " + str(len(temp_urls)) + " URL in " + link
+		output.new_line(set_color(message, fore="green"))
 		for temp_url in temp_urls:
 			if temp_url not in urls:
 				urls.append(temp_url)
@@ -297,14 +308,19 @@ def giveresult(urls, domian):
 	sss=[]
 	if urls == None:
 		return None
-	print(Fore.MAGENTA + Style.BRIGHT+"Find " + str(len(urls)) + " URL:"+Style.RESET_ALL)
-	print(Fore.YELLOW + Style.BRIGHT+"Start testing for survival!"+Style.RESET_ALL)
+	current_time = time.strftime("%H:%M:%S")
+	message = f"[{current_time}]  Find " + str(len(urls)) + " URL:"
+	output.new_line(set_color(message, fore="magenta"))
+	current_time = time.strftime("%H:%M:%S")
+	message = f"[{current_time}]  Start testing for survival!"
+	output.new_line(set_color(message, fore="yellow"))
 	content_url = ""
 	content_subdomain = ""
 	def process_url(url):
 		"""
 		处理单个URL，检查其可访问性并获取状态码
 		"""
+		import time
 		title=''
 		Exclusions=['.js','.png','.jpg','.ico','.css','.gif','.svg','.mp3','.wav','.mp4','.webm']
 		try:
@@ -318,19 +334,21 @@ def giveresult(urls, domian):
 		except:
 			status_code = 404
 
-		if status_code == 200 or status_code == 201:
-			colour = Fore.GREEN + Style.BRIGHT
-		elif status_code == 301 or status_code == 302:
-			colour = Fore.BLUE + Style.BRIGHT
-		elif status_code == 403 or status_code == 404:
-			colour = Fore.MAGENTA + Style.BRIGHT
-		elif status_code == 500:
-			colour = Fore.RED + Style.BRIGHT
+		if status_code in (200, 201, 204):
+			colour = set_color(str(status_code), fore="green")
+		elif status_code == 401:
+			colour = set_color(str(status_code), fore="yellow")
+		elif status_code == 403:
+			colour = set_color(str(status_code), fore="blue")
+		elif status_code in range(500, 600):
+			colour = set_color(str(status_code), fore="red")
+		elif status_code in range(300, 400):
+			colour = set_color(str(status_code), fore="cyan")
 		else:
-			colour = Fore.WHITE + Style.BRIGHT
+			colour = set_color(str(status_code), fore="magenta")
 		if status_code != 404:
 			if not any(url.endswith(ext) for ext in Exclusions):
-				print( url + ' ' + colour + str(status_code)+Style.RESET_ALL)
+
 				sss.append({"URL": url, "Code": str(status_code),"title":str(title)})
 				if status_code == 403:
 					try:
@@ -338,7 +356,6 @@ def giveresult(urls, domian):
 							f.write(str(url) + '\n')
 					except:
 						pass
-
 
 	def main():
 		"""
@@ -370,7 +387,9 @@ def giveresult(urls, domian):
 
 	#print(Style.RESET_ALL)
 	subdomains = find_subdomain(urls, domian)
-	print(Fore.MAGENTA + Style.BRIGHT+"\nFind " + str(len(subdomains)) + " Subdomain:"+Style.RESET_ALL)
+	current_time = time.strftime("%H:%M:%S")
+	message = f"[{current_time}]  Find " + str(len(subdomains)) + " Subdomain:"
+	output.new_line(set_color(message, fore="magenta"))
 	#print(Style.RESET_ALL)
 
 	# 获取当前路径
@@ -386,5 +405,6 @@ def giveresult(urls, domian):
 		# with open(path_get+'/ehole/ehole.txt','a+') as f:
 		# 	f.write(http_url+'\n')
 		content_subdomain += subdomain + "\n"
-		print(subdomain)
-
+		current_time = time.strftime("%H:%M:%S")
+		message = f"[{current_time}]  " + subdomain
+		output.new_line(set_color(message, fore="blue"))

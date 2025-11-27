@@ -536,6 +536,58 @@ def packer_fuzzer():
         # print(Fore.RED + f"Packer-Fuzzer扫描期间出错: {str(e)}" + Style.RESET_ALL)
 
 
+def subfinder_scan():
+    """
+    调用 subfinder 子域名扫描模块
+    """
+    import os
+    import time
+    from lib.core.options import parse_options
+    from lib.view.colors import set_color
+    
+    current_time = time.strftime("%H:%M:%S")
+    message = f"[{current_time}] 开始SubFinder子域名扫描..."
+    print(set_color(message, fore="blue"))
+    
+    try:
+        # 检查 bypass403_url.txt 文件是否存在并读取URL
+        if os.path.exists('bypass403_url.txt'):
+            with open('bypass403_url.txt', 'r') as f:
+                url = f.read().strip()
+
+            if url:
+                # print(f"")
+                message = f"[{current_time}]扫描目标: {url}"
+                print(set_color(message, fore="blue"))
+                # 导入并调用 subfinder 模块
+                from lib.subfinderX.subfinder import run_subfinder
+                
+                # 调用 subfinder 进行扫描
+                run_subfinder(
+                    domain=url,
+                    deep=5,
+                    dict_file="test.txt",
+                    enable_http=True,
+                    random_check=True
+                )
+                
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] SubFinder扫描完成"
+                print(set_color(message, fore="green"))
+            else:
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] bypass403_url.txt中未找到有效URL"
+                print(set_color(message, fore="red"))
+        else:
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}] 未找到bypass403_url.txt文件"
+            print(set_color(message, fore="red"))
+            
+    except Exception as e:
+        current_time = time.strftime("%H:%M:%S")
+        message = f"[{current_time}] SubFinder扫描期间出错: {str(e)}"
+        print(set_color(message, fore="red"))
+
 
 def run():
     """
@@ -544,6 +596,7 @@ def run():
     该函数按顺序调用多个安全检测模块，包括漏洞扫描、JS文件分析、
     403绕过测试、指纹识别、打包器模糊测试和Swagger接口扫描等功能。
     """
+    current_time = time.strftime("%H:%M:%S")
 
     # 执行基础初始化操作
     hhh()
@@ -557,18 +610,25 @@ def run():
     # 初始化并运行主控制器
     Controller()
 
-
     # 执行JavaScript文件查找和分析
+    print(set_color(f"[{current_time}] 执行JavaScript文件查找和分析 ", fore="blue"))
     jsfind()
 
     # 运行403 Forbidden状态码绕过测试
+    print(set_color(f"[{current_time}] 运行403 Forbidden状态码绕过测试 ", fore="blue"))
     run_bypass403()
 
     # 执行EHole指纹识别工具
+    print(set_color(f"[{current_time}] 执行EHole指纹识别工具 ", fore="blue"))
     ehole()
 
     # 运行打包器模糊测试
+    print(set_color(f"[{current_time}] 运行打包器模糊测试 ", fore="blue"))
     packer_fuzzer()
+
+    # 运行SubFinder子域名扫描
+    print(set_color(f"[{current_time}] SubFinder子域名扫描 ", fore="blue"))
+    subfinder_scan()
 
     # 执行Swagger接口扫描
     swagger_scan()

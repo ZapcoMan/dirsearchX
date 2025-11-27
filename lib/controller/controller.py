@@ -257,8 +257,9 @@ class Controller:
 
             finally:
                 self.targets.pop(0)
-        message = set_color("\nTask Completed", fore="yellow", style="bright")
-        output.warning(message)
+        current_time = time.strftime("%H:%M:%S")
+        message = set_color("Task Completed", fore="yellow", style="bright")
+        output.warning(f"[{current_time}] {message}")
 
         if options["session_file"]:
             try:

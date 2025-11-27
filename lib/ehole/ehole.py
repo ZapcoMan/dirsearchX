@@ -82,7 +82,18 @@ def start_ehole():
             # 尝试读取CSV文件中的URL
             csv_file = os.path.join(reports_dir, domain1 + '.csv')
             if os.path.exists(csv_file):
-                file_csv = open(csv_file, 'r', encoding='GB18030')
+                # 使用更健壮的方式处理文件编码
+                try:
+                    # 首先尝试使用 UTF-8 编码
+                    file_csv = open(csv_file, 'r', encoding='utf-8')
+                except UnicodeDecodeError:
+                    try:
+                        # 如果 UTF-8 失败，尝试使用 GB18030 编码
+                        file_csv = open(csv_file, 'r', encoding='GB18030')
+                    except UnicodeDecodeError:
+                        # 如果两种编码都失败，使用系统默认编码并忽略错误
+                        file_csv = open(csv_file, 'r', encoding='utf-8', errors='ignore')
+                
                 rows = csv.reader(file_csv)
                 for row in rows:
                     if len(row) > 0 and 'http' in row[0]:
@@ -96,6 +107,7 @@ def start_ehole():
                             output.new_line(set_color(message, fore="green"))
                         except:
                             pass
+                file_csv.close()
 
             # 检查是否有正常扫描到的URL
             with open(ehole_file, 'r') as f:

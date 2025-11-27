@@ -1,0 +1,30 @@
+# Dirsearch started Thu Nov 27 08:19:13 2025 as: .\dirsearchplus.py -z yes -u http://www.baidu.com
+
+302   231B   http://www.baidu.com/.htaccess    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess-dev    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess-local    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.old    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.bak    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.bak1    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.orig    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.inc    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess-marco    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.sample    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.save    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess.txt    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htpasswd/    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccessold2    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htpasswd.inc    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htpasswd.bak    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccessold    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccessbak    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htpasswd-old    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.htaccess/    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+302   231B   http://www.baidu.com/.httr-oauth    -> REDIRECTS TO: http://www.baidu.com/forbiddenip/forbidden.html
+301   234B   http://www.baidu.com/2002    -> REDIRECTS TO: http://www.baidu.com/2002/
+301   234B   http://www.baidu.com/2005    -> REDIRECTS TO: http://www.baidu.com/2005/
+301   234B   http://www.baidu.com/2004    -> REDIRECTS TO: http://www.baidu.com/2004/
+301   234B   http://www.baidu.com/2006    -> REDIRECTS TO: http://www.baidu.com/2006/
+301   234B   http://www.baidu.com/2007    -> REDIRECTS TO: http://www.baidu.com/2007/
+301   234B   http://www.baidu.com/2008    -> REDIRECTS TO: http://www.baidu.com/2008/
+301   234B   http://www.baidu.com/2009    -> REDIRECTS TO: http://www.baidu.com/2009/

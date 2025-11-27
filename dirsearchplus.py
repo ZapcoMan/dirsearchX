@@ -518,6 +518,7 @@ def run():
     # 初始化并运行主控制器
     Controller()
 
+
     # 执行JavaScript文件查找和分析
     jsfind()
 

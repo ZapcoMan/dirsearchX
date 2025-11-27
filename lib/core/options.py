@@ -26,6 +26,14 @@ def parse_options():
     open("bypass403_url.txt", 'w').close()
     opt = parse_config(parse_arguments())
 
+    # 如果启用了-all选项，则将所有模块设置为"yes"
+    if opt.all_modules:
+        opt.bypass = ["yes"]
+        opt.jsfind = ["yes"]
+        opt.zwsb = ["yes"]
+        opt.packer_fuzzer = ["yes"]
+        opt.swagger = ["yes"]
+
     if opt.session_file:
         return vars(opt)
 

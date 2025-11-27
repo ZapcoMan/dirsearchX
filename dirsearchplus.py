@@ -22,6 +22,7 @@ from lib.core.installation import check_dependencies, install_dependencies
 from lib.core.settings import OPTIONS_FILE
 from lib.parse.config import ConfigParser
 from lib.view.colors import set_color
+from lib.view.terminal import output
 
 init()
 

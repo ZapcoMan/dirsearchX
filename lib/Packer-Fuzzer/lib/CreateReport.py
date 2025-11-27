@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-import os,re,sqlite3,time
+import os, time
 from docx import Document   #用来建立一个word对象
 from docx.shared import Pt  #用来设置字体的大小
 from urllib.parse import urlparse
@@ -71,7 +71,7 @@ class CreateReport():
                 Utils().copyPath("doc" + os.sep + "template" + os.sep + "html" + os.sep + "res","reports")
 
             try:
-                CreatHtml(self.projectTag,nameHtml).CreatMe()
+                CreatHtml(self.projectTag, nameHtml).CreatMe()
                 self.log.debug("html模板正常")
                 # 输出HTML报告绝对路径，方便在浏览器中打开
                 html_abs_path = os.path.abspath(nameHtml)

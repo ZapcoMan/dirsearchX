@@ -1,4 +1,6 @@
 import re, os, sys, csv
+import time
+import subprocess
 from urllib.parse import urlparse
 # 引入dirsearch的日志和终端输出模块
 from lib.view.terminal import output
@@ -48,7 +50,9 @@ def start_ehole():
 
         try:
             # 尝试执行正常扫描逻辑（读取dir_file_path.txt和CSV文件）
-            output.warning("尝试执行正常扫描...")
+            current_time = time.strftime("%H:%M:%S")
+            message = f'[{current_time}]尝试执行正常扫描.....'
+            output.new_line(set_color(message, fore="yellow"))
 
             # 读取dir_file_path.txt
             if os.path.exists('dir_file_path.txt'):
@@ -67,6 +71,11 @@ def start_ehole():
                             try:
                                 with open(ehole_file, 'a+') as ehole:
                                     ehole.write(url[0] + '\n')
+                                    
+                                # 使用与dirsearch一致的输出格式显示找到的URL
+                                current_time = time.strftime("%H:%M:%S")
+                                message = f"[{current_time}]{url[0]}"
+                                output.new_line(set_color(message, fore="green"))
                             except:
                                 pass
 
@@ -80,6 +89,11 @@ def start_ehole():
                         try:
                             with open(ehole_file, 'a+') as ehole:
                                 ehole.write(row[0] + '\n')
+                                
+                            # 使用与dirsearch一致的输出格式显示找到的URL
+                            current_time = time.strftime("%H:%M:%S")
+                            message = f"[{current_time}]{row[0]}"
+                            output.new_line(set_color(message, fore="green"))
                         except:
                             pass
 
@@ -100,19 +114,32 @@ def start_ehole():
         # 根据操作系统类型执行不同命令
         win_mac = sys.platform
         if win_mac == "darwin":  # macOS
-            output.new_line(set_color(f"正在扫描指纹: {domain_url}", fore="cyan"))
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}]正在扫描指纹: {domain_url}"
+            output.new_line(set_color(message, fore="cyan"))
             # 确保ehole可执行
-            os.system(f'chmod +x {os.path.join(path_get, "ehole", "ehole")}')
+            ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole")
+            os.chmod(ehole_executable, 0o755)  # 使用数字权限表示法
             # 执行ehole扫描
-            os.system(f"{os.path.join(path_get, 'ehole', 'ehole')} finger -l {ehole_file}")
+            subprocess.run([ehole_executable, "finger", "-l", ehole_file])
         elif win_mac == "win32":  # Windows
-            os.system(f'{os.path.join(path_get, "ehole", "ehole.exe")} finger -l {ehole_file} -o {os.path.join(reports_dir, f"{domain1}.json")}')
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}]正在扫描指纹: {domain_url}"
+            output.new_line(set_color(message, fore="cyan"))
+            ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole.exe")
+            json_output = os.path.join(reports_dir, f"{domain1}.json")
+            subprocess.run([ehole_executable, "finger", "-l", ehole_file, "-o", json_output])
         else:  # Linux或其他系统
-            output.new_line(set_color(f"正在扫描指纹: {domain_url}", fore="cyan"))
-            os.system(f'chmod +x {os.path.join(path_get, "ehole", "ehole")}')
-            os.system(f"{os.path.join(path_get, 'ehole', 'ehole')} finger -l {ehole_file}")
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}]正在扫描指纹: {domain_url}"
+            output.new_line(set_color(message, fore="cyan"))
+            ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole")
+            os.chmod(ehole_executable, 0o755)  # 使用数字权限表示法
+            subprocess.run([ehole_executable, "finger", "-l", ehole_file])
 
-        output.new_line(set_color(f"指纹扫描完成！", fore="green"))
+        current_time = time.strftime("%H:%M:%S")
+        message = f"[{current_time}]指纹扫描完成！"
+        output.new_line(set_color(message, fore="green"))
 
     except Exception as e:
         output.error(f"扫描过程中发生错误: {str(e)}")
@@ -123,19 +150,24 @@ def start_ehole():
                 domain_url = domains.read().strip()
 
             if domain_url:
-                output.new_line(set_color(f"尝试只扫描根目录的指纹: {domain_url}", fore="yellow"))
-                ehole_file = os.path.join(path_get, 'ehole', 'ehole.txt')
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}]尝试只扫描根目录的指纹: {domain_url}"
+                output.new_line(set_color(message, fore="yellow"))
+                ehole_file = os.path.join(path_get, 'lib', 'ehole', 'ehole.txt')
                 with open(ehole_file, 'w') as f:
                     f.write(domain_url + '\n')
 
                 win_mac = sys.platform
                 if win_mac == "darwin":
-                    os.system(f'chmod +x {os.path.join(path_get, "ehole", "ehole")}')
-                    os.system(f"{os.path.join(path_get, 'ehole', 'ehole')} finger -l {ehole_file}")
+                    ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole")
+                    os.chmod(ehole_executable, 0o755)  # 使用数字权限表示法
+                    subprocess.run([ehole_executable, "finger", "-l", ehole_file])
                 elif win_mac == "win32":
-                    os.system(f'{os.path.join(path_get, "ehole", "ehole.exe")} finger -l {ehole_file}')
+                    ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole.exe")
+                    subprocess.run([ehole_executable, "finger", "-l", ehole_file])
                 else:
-                    os.system(f'chmod +x {os.path.join(path_get, "ehole", "ehole")}')
-                    os.system(f"{os.path.join(path_get, 'ehole', 'ehole')} finger -l {ehole_file}")
+                    ehole_executable = os.path.join(path_get, "lib", "ehole", "ehole")
+                    os.chmod(ehole_executable, 0o755)  # 使用数字权限表示法
+                    subprocess.run([ehole_executable, "finger", "-l", ehole_file])
         except Exception as inner_e:
             output.error(f"尝试只扫描根目录指纹时也发生错误: {str(inner_e)}")

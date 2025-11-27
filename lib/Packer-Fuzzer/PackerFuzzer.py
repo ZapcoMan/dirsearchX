@@ -7,6 +7,9 @@ from lib.Controller import Project
 from lib.TestProxy import testProxy
 from lib.common.cmdline import CommandLines
 
+# 使用Packer-Fuzzer自带的日志系统
+from lib.common.CreatLog import creatLog
+
 
 # 处理SIGINT信号 (CTRL+C)
 def signal_handler(sig, frame):

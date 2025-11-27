@@ -6,6 +6,9 @@ from lib.common import readConfig
 from lib.Database import DatabaseType
 from lib.common.CreatLog import creatLog
 
+# 使用Packer-Fuzzer自带的日志系统
+from lib.common.CreatLog import creatLog
+
 
 class InfoTest():
 
@@ -54,6 +57,8 @@ class InfoTest():
                                             startInfoEnd) + "','" + str(1) + "','" + "INFO" + "','" + str(infoLast) + "')"
                                         cursor.execute(sql)
                                         connect.close()
+                                        # 使用Packer-Fuzzer自带的日志系统输出发现的信息
+                                        self.log.info(f"[+] 发现信息泄露: {infoStr[0]} ({infoLast})")
                                     except Exception as e:
                                         self.log.error("[Err] %s" % e)
                         jsPath.close()

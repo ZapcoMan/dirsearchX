@@ -5,6 +5,9 @@ import requests, sqlite3, warnings, os
 from lib.common.utils import Utils
 from lib.Database import DatabaseType
 
+# 使用Packer-Fuzzer自带的日志系统
+from lib.common.CreatLog import creatLog
+
 
 class CheckPacker():
 
@@ -46,11 +49,16 @@ class CheckPacker():
         headers = self.header
         url = self.url
         sslFlag = int(self.options.ssl_flag)
-        if sslFlag == 1:
-            demo = requests.get(url=url, headers=headers, proxies=self.proxy_data,verify=False).text
-        else:
-            demo = requests.get(url=url, headers=headers, proxies=self.proxy_data).text
-        return 1 if any(i in demo for i in self.fingerprint_html) else 0
+        try:
+            if sslFlag == 1:
+                demo = requests.get(url=url, headers=headers, proxies=self.proxy_data,verify=False).text
+            else:
+                demo = requests.get(url=url, headers=headers, proxies=self.proxy_data).text
+            return 1 if any(i in demo for i in self.fingerprint_html) else 0
+        except Exception as e:
+            # 使用Packer-Fuzzer自带的日志系统输出错误信息
+            creatLog().get_logger().error(f"[!] HTML检查过程中发生错误: {str(e)}")
+            return 0
 
     def checkStart(self):
         try:

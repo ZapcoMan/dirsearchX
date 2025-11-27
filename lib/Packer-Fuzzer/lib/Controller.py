@@ -35,6 +35,7 @@ class Project():
         ParseJs(projectTag, self.url, self.options).parseJsStart()
         path_log = os.path.abspath(log_name)
         path_db = os.path.abspath(DatabaseType(projectTag).getPathfromDB() + projectTag + ".db")
+        # 使用Packer-Fuzzer自带的日志系统
         creatLog().get_logger().info("[!] " + Utils().getMyWord("{db_path}") + path_db)  #显示数据库文件路径
         creatLog().get_logger().info("[!] " + Utils().getMyWord("{log_path}") + path_log) #显示log文件路径
         checkResult = CheckPacker(projectTag, self.url, self.options).checkStart()

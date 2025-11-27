@@ -368,7 +368,7 @@ def packer_fuzzer():
     import time
     from lib.core.options import parse_options
     current_time = time.strftime("%H:%M:%S")
-    message = f"[{current_time}] packer_fuzzer "
+    message = f"[{current_time}] packer_fuzzer ----------------------------------"
     output.new_line(set_color(message, fore="cyan"))
     # 检查 -p/--packer-fuzzer 参数
     if (parse_options()['packer_fuzzer']) == None:
@@ -377,8 +377,10 @@ def packer_fuzzer():
     packer_opt = "".join(parse_options()['packer_fuzzer'])
     if packer_opt.lower() != 'yes':
         return
-
-    print(Fore.GREEN + Style.BRIGHT + "开始Packer-Fuzzer扫描！" + Style.RESET_ALL)
+    message = f"[{current_time}] 开始Packer-Fuzzer扫描！"
+    print(set_color(message, fore="blue"), end='')
+    # print(Fore.GREEN + Style.BRIGHT + "开始Packer-Fuzzer扫描！" + Style.RESET_ALL)
+    # current_time = time.strftime("%H:%M:%S")
 
     try:
         # 检查 bypass403_url.txt 文件是否存在并读取URL
@@ -395,7 +397,9 @@ def packer_fuzzer():
                 packer_fuzzer_dir = os.path.join(packer_fuzzer_base_dir, 'Packer-Fuzzer')
 
                 if not os.path.exists(packer_fuzzer_dir):
-                    print(Fore.YELLOW + "未找到Packer-Fuzzer。正在从GitHub克隆..." + Style.RESET_ALL)
+                    # print(Fore.YELLOW + "未找到Packer-Fuzzer。正在从GitHub克隆..." + Style.RESET_ALL)
+                    message = f"[{current_time}] 未找到Packer-Fuzzer  -- .... -- 正在从GitHub克隆...！"
+                    print(set_color(message, fore="blue"), end='')
                     # 确保 script 目录存在
                     if not os.path.exists(packer_fuzzer_base_dir):
                         os.makedirs(packer_fuzzer_base_dir)
@@ -406,7 +410,12 @@ def packer_fuzzer():
 
                 # 使用项目根目录下的.venv虚拟环境
                 project_root = os.getcwd()
-                print(Fore.GREEN + f"使用项目根目录下的.venv虚拟环境: {project_root}" + Style.RESET_ALL)
+                current_time = time.strftime("%H:%M:%S")
+                message =  f"[{current_time}] 使用项目根目录下的.venv虚拟环境: {project_root}" + Style.RESET_ALL
+                print(set_color(message, fore="blue"), end='')
+                message = f"\n[{current_time}] ---------------------------------------------------------------" + Style.RESET_ALL
+                print(set_color(message, fore="blue"), end='')
+                # print(Fore.GREEN + f"使用项目根目录下的.venv虚拟环境: {project_root}" + Style.RESET_ALL)
                 if sys.platform == "win32":
                     venv_python = os.path.join(project_root, '.venv', 'Scripts', 'python.exe')
                     venv_pip = os.path.join(project_root, '.venv', 'Scripts', 'pip.exe')
@@ -416,7 +425,9 @@ def packer_fuzzer():
 
                 # 检查项目虚拟环境是否存在
                 if not os.path.exists(os.path.join(project_root, '.venv')):
-                    print(Fore.RED + "项目虚拟环境(.venv)不存在，请先创建项目虚拟环境" + Style.RESET_ALL)
+                    message = f"{[current_time]} 项目虚拟环境(.venv)不存在，请先创建项目虚拟环境"
+                    print(set_color(message, fore="blue"), end='')
+                    # print(Fore.RED + "" + Style.RESET_ALL)
                     return
 
                 # 确保 Packer-Fuzzer 的报告目录存在
@@ -442,7 +453,9 @@ def packer_fuzzer():
                         need_install = True
 
                 if need_install:
-                    print(Fore.GREEN + "正在项目虚拟环境中安装Packer-Fuzzer依赖..." + Style.RESET_ALL)
+                    # print(Fore.GREEN + "正在项目虚拟环境中安装Packer-Fuzzer依赖..." + Style.RESET_ALL)
+                    message = f"\n[{current_time}] 正在项目虚拟环境中安装Packer-Fuzzer依赖..."
+                    print(set_color(message, fore="blue"), end='')
                     # 使用项目根目录下的虚拟环境pip来安装Packer-Fuzzer目录中的requirements.txt
                     subprocess.run([
                         venv_pip, 'install', '-r', os.path.join(packer_fuzzer_dir, 'requirements.txt')
@@ -452,7 +465,9 @@ def packer_fuzzer():
                     with open(installed_flag, 'w') as f:
                         f.write(str(time.time()))
                 else:
-                    print(Fore.GREEN + "Packer-Fuzzer依赖已安装，跳过安装步骤" + Style.RESET_ALL)
+                    # print(Fore.GREEN + "Packer-Fuzzer依赖已安装，跳过安装步骤" + Style.RESET_ALL)
+                    message = f"\n[{current_time}] Packer-Fuzzer依赖已安装，跳过安装步骤"
+                    print(set_color(message, fore="blue"), end='')
 
                 # 设置环境变量以解决编码问题
                 env = os.environ.copy()
@@ -461,7 +476,9 @@ def packer_fuzzer():
                     env['PYTHONLEGACYWINDOWSFSENCODING'] = '1'
 
                 # 运行 Packer-Fuzzer 扫描，使用 errors='ignore' 或 errors='replace' 来处理编码问题
-                print(Fore.GREEN + "正在运行Packer-Fuzzer扫描..." + Style.RESET_ALL)
+                message = f"\n[{current_time}] 正在运行Packer-Fuzzer扫描..."
+                print(set_color(message, fore="blue"), end='')
+                # print(Fore.GREEN + "" + Style.RESET_ALL)
                 result = subprocess.run([
                     venv_python, 'PackerFuzzer.py', '-u', url
                 ], cwd=packer_fuzzer_dir,  # 使用完整的 Packer-Fuzzer 目录路径
@@ -474,27 +491,49 @@ def packer_fuzzer():
                 report_files = glob.glob(os.path.join(packer_fuzzer_dir, 'reports', '*.html'))
                 if report_files:
                     latest_report = max(report_files, key=os.path.getctime)
-                    print(Fore.GREEN + "\nPacker-Fuzzer扫描报告已找到:" + Style.RESET_ALL)
-                    print(f"报告路径: {latest_report}")
-                    print(Fore.CYAN + "\n您可以在浏览器中打开此HTML报告查看详细的扫描结果。" + Style.RESET_ALL)
-                    print(Fore.CYAN + "报告包含检测到的漏洞、API端点和其他发现的信息。" + Style.RESET_ALL)
+                    message = f"\n[{current_time}]  Packer-Fuzzer扫描报告已找到:"
+                    print(set_color(message, fore="blue"), end='')
+                    # print(Fore.GREEN + "\nPacker-Fuzzer扫描报告已找到:" + Style.RESET_ALL)
+                    message = f"[{current_time}] 报告路径: {latest_report}"
+                    print(set_color(message, fore="blue"), end='')
+                    message = f"\n [{current_time}] 您可以在浏览器中打开此HTML报告查看详细的扫描结果。"
+                    print(set_color(message, fore="blue"), end='')
+                    # print(Fore.CYAN + "\n您可以在浏览器中打开此HTML报告查看详细的扫描结果。" + Style.RESET_ALL)
+                    message = f"[{current_time}] 报告包含检测到的漏洞、API端点和其他发现的信息。"
+                    print(set_color(message, fore="blue"), end='')
+                    # print(Fore.CYAN + "报告包含检测到的漏洞、API端点和其他发现的信息。" + Style.RESET_ALL)
                 else:
-                    print(Fore.YELLOW + "\n未找到HTML报告。检查Packer-Fuzzer是否成功完成。" + Style.RESET_ALL)
-
+                    # print(Fore.YELLOW + "\n未找到HTML报告。检查Packer-Fuzzer是否成功完成。" + Style.RESET_ALL)
+                    message = f"\n[{current_time}] 未找到HTML报告。检查Packer-Fuzzer是否成功完成。"
+                    print(set_color(message, fore="yellow"), end='')
                 # 输出结果
-                print(Fore.GREEN + "\nPacker-Fuzzer扫描结果:" + Style.RESET_ALL)
-                print(result.stdout)
+                # print(Fore.GREEN + "\nPacker-Fuzzer扫描结果:" + Style.RESET_ALL)
+                message = f"\n[{current_time}] Packer-Fuzzer扫描结果:"
+                print(set_color(message, fore="green"), end='')
+                # print(f"[{current_time}]"+ result.stdout)
+                message = f"\n[{current_time}]" + result.stdout + ""
+                print(set_color(message, fore="green"), end='')
 
                 if result.stderr:
                     pass
-                    print(Fore.RED + "Packer-Fuzzer:" + Style.RESET_ALL)
-                    print(result.stderr)
+                    # print(Fore.RED + "Packer-Fuzzer:" + Style.RESET_ALL)
+                    message = f"[{current_time}] Packer-Fuzzer"
+                    print(set_color(message, fore="yellow"), end='')
+
+                    print(set_color(f"\n[{current_time}]" + result.stderr, fore="green"), end='')
+                    # print(result.stderr)
             else:
-                print(Fore.RED + "bypass403_url.txt中未找到URL" + Style.RESET_ALL)
+                # print(Fore.RED + "bypass403_url.txt中未找到URL" + Style.RESET_ALL)
+                message = f"[{current_time}] bypass403_url.txt中未找到URL"
+                print(set_color(message, fore="red"), end='')
         else:
-            print(Fore.RED + "未找到bypass403_url.txt" + Style.RESET_ALL)
+            message = f"[{current_time}] 未找到bypass403_url.txt"
+            print(set_color(message, fore="red"), end='')
+            # print(Fore.RED + "未找到bypass403_url.txt" + Style.RESET_ALL)
     except Exception as e:
-        print(Fore.RED + f"Packer-Fuzzer扫描期间出错: {str(e)}" + Style.RESET_ALL)
+        message = f"[{current_time}] Packer-Fuzzer扫描期间出错: {str(e)}"
+        print(set_color(message, fore="red"), end='')
+        # print(Fore.RED + f"Packer-Fuzzer扫描期间出错: {str(e)}" + Style.RESET_ALL)
 
 
 

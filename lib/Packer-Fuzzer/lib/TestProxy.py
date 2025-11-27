@@ -5,6 +5,10 @@ import requests,sys
 from .common.utils import Utils
 from .common.cmdline import CommandLines
 
+# 使用Packer-Fuzzer自带的日志系统
+from .common.CreatLog import creatLog
+
+
 def testProxy(options,show):
     """
     测试代理连接并获取代理IP地址
@@ -39,10 +43,10 @@ def testProxy(options,show):
             if options.silent == None:
                 print("[+] " + Utils().getMyWord("{connect_s}") + ipAddr)
         return ipAddr
-    except:
+    except Exception as e:
         # 异常处理：保持返回默认IP地址
         if show == 1:
             if options.silent == None:
-                pass
+                # 使用Packer-Fuzzer自带的日志系统输出错误信息
+                creatLog().get_logger().error(f"[!] 代理连接测试失败: {str(e)}")
         return ipAddr
-

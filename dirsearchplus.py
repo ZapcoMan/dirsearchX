@@ -185,7 +185,10 @@ def ehole():
         无
     """
     from lib.core.options import parse_options
-
+    from lib.view.terminal import output
+    from lib.view.colors import set_color
+    import time
+    import subprocess
     # 解析命令行选项并检查zwsb参数是否设置
     if (parse_options()['zwsb']) == None:
         pass
@@ -194,13 +197,15 @@ def ehole():
         zwsb="".join(parse_options()['zwsb'])
         if zwsb=='yes':
             # 打印指纹识别启动信息并调用ehole主程序
-            print(Fore.GREEN + Style.BRIGHT + "指纹识别！" + Style.RESET_ALL)
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}]  指纹识别！"
+            output.new_line(set_color(message, fore="green", style="bright"))
             # 调用 lib/ehole/ehole.py 的 start_ehole() 方法
             import lib.ehole.ehole
-            print(Fore.GREEN + Style.BRIGHT + "正在启动指纹识别..." + Style.RESET_ALL)
-
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}]  正在启动指纹识别..！"
+            output.new_line(set_color(message, fore="green",style="bright"))
             lib.ehole.ehole.start_ehole()
-
         else:
             pass
 

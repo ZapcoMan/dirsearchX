@@ -2,6 +2,10 @@ import requests, validators, os, tldextract,sys
 from colorama import init, Fore, Style
 from pyfiglet import Figlet
 from requests.packages import urllib3
+
+from lib.view.terminal import output
+from lib.view.colors import set_color
+
 urllib3.disable_warnings()
 import time
 
@@ -209,16 +213,18 @@ class Query():
         Returns:
             str: 表示颜色的ANSI转义序列。
         """
-        if status_code == 200 or status_code == 201:
-            colour = Fore.GREEN + Style.BRIGHT
-        elif status_code == 301 or status_code == 302:
-            colour = Fore.BLUE + Style.BRIGHT
-        elif status_code == 403 or status_code == 404:
-            colour = Fore.MAGENTA + Style.BRIGHT
-        elif status_code == 500:
-            colour = Fore.RED + Style.BRIGHT
+        if status_code in (200, 201, 204):
+            colour = set_color(str(status_code), fore="green")
+        elif status_code == 401:
+            colour = set_color(str(status_code), fore="yellow")
+        elif status_code == 403:
+            colour = set_color(str(status_code), fore="blue")
+        elif status_code in range(500, 600):
+            colour = set_color(str(status_code), fore="red")
+        elif status_code in range(300, 400):
+            colour = set_color(str(status_code), fore="cyan")
         else:
-            colour = Fore.WHITE + Style.BRIGHT
+            colour = set_color(str(status_code), fore="magenta")
 
         return colour
 
@@ -274,11 +280,13 @@ class Query():
 
         line_width = 70
         target_address = "POST --> " + self.url + self.dir
-        info = f"STATUS: {colour}{p.status_code}{reset}\tSIZE: {len(p.content)}"
+        info = f"STATUS: {colour}\tSIZE: {len(p.content)}"
         info_pure = f"STATUS: {p.status_code}\tSIZE: {len(p.content)}"
         remaining = line_width - len(target_address)
         if p.status_code !=403:
-            print(target_address + " " * remaining + info+'\n',end='')
+            current_time = time.strftime("%H:%M:%S")
+            message = f"[{current_time}] " + target_address + " " * remaining + info
+            output.new_line(message)
 
         if p.status_code==200:
             res_h = self.send_request('GET', self.url)
@@ -307,11 +315,13 @@ class Query():
             colour = self.checkStatusCode(r.status_code)
 
             target_address = "GET --> " + self.url + path
-            info = f"STATUS: {colour}{r.status_code}{reset}\tSIZE: {len(r.content)}"
+            info = f"STATUS: {colour}\tSIZE: {len(r.content)}"
             info_pure = f"STATUS: {r.status_code}\tSIZE: {len(r.content)}"
             remaining = line_width - len(target_address)
             if r.status_code != 403:
-                print(target_address + " " * remaining + info+'\n',end='')
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] " + target_address + " " * remaining + info
+                output.new_line(message)
             if r.status_code==200:
                 res_h = self.send_request('GET', self.url)
                 if res_h and len(r.content) != len(res_h.content):
@@ -338,13 +348,17 @@ class Query():
             reset = Style.RESET_ALL
 
             target_address = "GET --> " + self.url + self.dir
-            info = f"STATUS: {colour}{r.status_code}{reset}\tSIZE: {len(r.content)}"
+            info = f"STATUS: {colour}\tSIZE: {len(r.content)}"
             info_pure = f"STATUS: {r.status_code}\tSIZE: {len(r.content)}"
             remaining = line_width - len(target_address)
 
             if r.status_code != 403:
-                print("\n" + target_address + " " * remaining + info+'\n',end='')
-                print(f"Header= {header}"+'\n',end='')
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] " + target_address + " " * remaining + info
+                output.new_line(message)
+                
+                header_message = f"[{current_time}] Header= {header}"
+                output.new_line(header_message)
             if r.status_code==200:
                 res_h = self.send_request('GET', self.url)
                 if res_h and len(r.content) !=len(res_h.content):
@@ -363,13 +377,17 @@ class Query():
             reset = Style.RESET_ALL
 
             target_address = "GET --> " + self.url
-            info = f"STATUS: {colour}{r.status_code}{reset}\tSIZE: {len(r.content)}"
+            info = f"STATUS: {colour}\tSIZE: {len(r.content)}"
             info_pure = f"STATUS: {r.status_code}\tSIZE: {len(r.content)}"
             remaining = line_width - len(target_address)
 
-            if r.status_code !=403:
-                print("\n" + target_address + " " * remaining + info+'\n',end='')
-                print(f"Header= {header}"+'\n',end='')
+            if r.status_code != 403:
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] " + target_address + " " * remaining + info
+                output.new_line(message)
+                
+                header_message = f"[{current_time}] Header= {header}"
+                output.new_line(header_message)
             if r.status_code ==200:
                 res_h = self.send_request('GET', self.url)
                 if res_h and len(r.content) != len(res_h.content):

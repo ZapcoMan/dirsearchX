@@ -21,6 +21,7 @@ from lib.core.exceptions import FailedDependenciesInstallation
 from lib.core.installation import check_dependencies, install_dependencies
 from lib.core.settings import OPTIONS_FILE
 from lib.parse.config import ConfigParser
+from lib.view.colors import set_color
 
 init()
 
@@ -68,8 +69,10 @@ def bypass():
 
     if not paths_to_process:
         return
+    current_time = time.strftime("%H:%M:%S")
+    message = f"[{current_time}] 开始处理 {len(paths_to_process)} 个403路径" + '\n'
+    print(set_color(message, fore="green"), end='')
 
-    print(f"开始处理 {len(paths_to_process)} 个403路径")
 
     # 使用优化版本处理
     try:
@@ -98,10 +101,20 @@ def run_bypass403():
         bp403="".join(parse_options()['bypass'])
         if bp403 =='yes':
             if size ==0 and size_js ==0:
-                print(Fore.GREEN + Style.BRIGHT + '没有403状态码存在！'+Style.RESET_ALL)
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] 没有403状态码存在！" + '\n'
+                print(set_color(message, fore="yellow"), end='')
+                # print(Fore.GREEN + Style.BRIGHT + '没有403状态码存在！'+Style.RESET_ALL)
             else:
-                print(Fore.GREEN + Style.BRIGHT+'开始403bypass！'+Style.RESET_ALL)
-                print(Fore.CYAN + Style.BRIGHT + '使用优化的403bypass模式！'+Style.RESET_ALL)
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] 开始403bypass！" +'\n'
+                print(set_color(message, fore="green"), end='')
+                # print(Fore.GREEN + Style.BRIGHT+''+Style.RESET_ALL)
+
+                current_time = time.strftime("%H:%M:%S")
+                message = f"[{current_time}] 使用优化的403bypass模式！！" +'\n'
+                print(set_color(message, fore="green"), end='')
+                # print(Fore.CYAN + Style.BRIGHT + ''+Style.RESET_ALL)
 
                 # 处理403list.txt路径
                 with open('403list.txt',) as f1:

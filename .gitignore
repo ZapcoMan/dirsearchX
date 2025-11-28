@@ -159,8 +159,15 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /reports/*/*.txt
+/reports/*.csv
 /script/Packer-Fuzzer/reports/*.docx
 /script/Packer-Fuzzer/reports/*.html
 /script/Packer-Fuzzer/reports/*.pdf
 /db/*.cache
 /reports/*.json
+lib/Packer-Fuzzer/reports/*.docx
+lib/Packer-Fuzzer/reports/*.html
+lib/Packer-Fuzzer/reports/*.pdf
+lib/Packer-Fuzzer/reports/*.json
+lib/Packer-Fuzzer/reports/*.txt
+lib/Packer-Fuzzer/reports/*.log

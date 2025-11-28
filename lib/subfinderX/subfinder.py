@@ -37,7 +37,7 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
         # 确保使用正确的字典文件路径
         dict_file_path = os.path.join(work_dir, "dict", dict_file)
         if os.path.exists(dict_file_path):
-            cmd.extend(["-d", os.path.join("dict", dict_file)])
+            cmd.extend(["-d", dict_file])
             
     if fuzz_data:
         cmd.extend(["-fd", fuzz_data])
@@ -56,9 +56,9 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
         cmd.extend(["-n", next_dict])
     else:
         # 确保使用正确的二级字典文件路径
-        next_dict_path = os.path.join(work_dir, "dict", next_dict)
+        next_dict_path = os.path.join(work_dir, next_dict)
         if os.path.exists(next_dict_path):
-            cmd.extend(["-n", os.path.join("dict", next_dict)])
+            cmd.extend(["-n", next_dict])
 
     # 使用 dirsearch 的日志模块替代 print，统一颜色和风格
     current_time = time.strftime("%H:%M:%S")

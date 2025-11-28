@@ -412,7 +412,7 @@ def packer_fuzzer():
                 # 使用项目根目录下的.venv虚拟环境
                 project_root = os.getcwd()
                 current_time = time.strftime("%H:%M:%S")
-                message =  f"[{current_time}] 使用项目根目录下的.venv虚拟环境: {project_root}" + Style.RESET_ALL
+                message =  f"\n[{current_time}] 使用项目根目录下的.venv虚拟环境: {project_root}" + Style.RESET_ALL
                 print(set_color(message, fore="blue"), end='')
                 message = f"\n[{current_time}] ---------------------------------------------------------------" + Style.RESET_ALL
                 print(set_color(message, fore="blue"), end='')
@@ -518,7 +518,7 @@ def packer_fuzzer():
                 if result.stderr:
                     pass
                     # print(Fore.RED + "Packer-Fuzzer:" + Style.RESET_ALL)
-                    message = f"[{current_time}] Packer-Fuzzer"
+                    message = f"\n[{current_time}] Packer-Fuzzer"
                     print(set_color(message, fore="yellow"), end='')
 
                     print(set_color(f"\n[{current_time}]" + result.stderr, fore="green"), end='')

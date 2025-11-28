@@ -1,3 +1,4 @@
+import os
 import sys
 
 from lib.core.settings import (
@@ -23,7 +24,8 @@ def parse_options():
     返回值:
         dict: 经过处理后的所有配置项组成的字典
     """
-    open("bypass403_url.txt", 'w').close()
+    os.makedirs('resources', exist_ok=True)
+    open("resources/bypass403_url.txt", 'w').close()
     opt = parse_config(parse_arguments())
 
     # 如果启用了-all选项，则将所有模块设置为"yes"
@@ -54,7 +56,7 @@ def parse_options():
         #opt.urls="http://www.baidu.com"
         exit(1)
     bypass403_url="".join(opt.urls)
-    with open('bypass403_url.txt','w') as f:
+    with open('resources/bypass403_url.txt','w') as f:
         f.write(bypass403_url)
 
 

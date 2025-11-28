@@ -10,12 +10,12 @@ def start_ehole():
     """
     启动EHole指纹识别工具，根据配置文件中的URL进行扫描。
 
-    该函数会读取bypass403_url.txt中的目标URL，并尝试从dir_file_path.txt或CSV报告中提取更多路径，
+    该函数会读取resources/bypass403_url.txt中的目标URL，并尝试从dir_file_path.txt或CSV报告中提取更多路径，
     然后使用EHole对这些路径执行指纹识别。如果无法获取额外路径，则仅对根目录进行扫描。
 
     参数:
         无显式参数，依赖于以下文件和环境：
-        - bypass403_url.txt：包含待扫描的目标URL
+        - resources/bypass403_url.txt：包含待扫描的目标URL
         - dir_file_path.txt（可选）：指向一个包含目录扫描结果的文件
         - reports/{domain}.csv（可选）：已有的扫描结果CSV文件
 
@@ -26,12 +26,12 @@ def start_ehole():
         # 获取当前工作目录
         path_get = os.getcwd()
 
-        # 首先读取bypass403_url.txt中的URL用于根目录扫描
-        with open(os.path.join(path_get, "bypass403_url.txt"), 'r') as domains:
+        # 首先读取resources/bypass403_url.txt中的URL用于根目录扫描
+        with open(os.path.join(path_get, "resources", "bypass403_url.txt"), 'r') as domains:
             domain_url = domains.read().strip()
 
         if not domain_url:
-            output.error("错误: bypass403_url.txt为空")
+            output.error("错误: resources/bypass403_url.txt为空")
             return
 
         # 创建临时文件用于扫描
@@ -158,7 +158,7 @@ def start_ehole():
         # 错误发生时，也只扫描根目录的指纹
         try:
             path_get = os.getcwd()
-            with open(os.path.join(path_get, "bypass403_url.txt"), 'r') as domains:
+            with open(os.path.join(path_get, "resources", "bypass403_url.txt"), 'r') as domains:
                 domain_url = domains.read().strip()
 
             if domain_url:

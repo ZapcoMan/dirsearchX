@@ -59,7 +59,7 @@ if config.safe_getboolean("options", "check-dependencies", False):
 
 def bypass():
     """优化的403bypass函数"""
-    with open('bypass403_url.txt') as f:
+    with open('resources/bypass403_url.txt') as f:
         bypass403_url = f.read().strip()
 
     # 收集所有需要处理的路径
@@ -383,14 +383,15 @@ def packer_fuzzer():
     # current_time = time.strftime("%H:%M:%S")
 
     try:
-        # 检查 bypass403_url.txt 文件是否存在并读取URL
-        if os.path.exists('bypass403_url.txt'):
-            with open('bypass403_url.txt', 'r') as f:
+        # 检查 resources/bypass403_url.txt 文件是否存在并读取URL
+        if os.path.exists('resources/bypass403_url.txt'):
+            with open('resources/bypass403_url.txt', 'r') as f:
                 url = f.read().strip()
 
             if url:
-                print(f"扫描URL: {url}")
-
+                # print(f"扫描URL: {url}")
+                message = f"\n[{current_time}] 扫描URL: {url}"
+                print(set_color(message, fore="blue"), end='')
                 # 检查是否已经安装了 Packer-Fuzzer
                 # 更新路径为 script/Packer-Fuzzer
                 packer_fuzzer_base_dir = os.path.join(os.getcwd(), 'lib')
@@ -523,13 +524,13 @@ def packer_fuzzer():
                     print(set_color(f"\n[{current_time}]" + result.stderr, fore="green"), end='')
                     # print(result.stderr)
             else:
-                # print(Fore.RED + "bypass403_url.txt中未找到URL" + Style.RESET_ALL)
+                # print(Fore.RED + "resources/bypass403_url.txt中未找到URL" + Style.RESET_ALL)
                 message = f"[{current_time}] bypass403_url.txt中未找到URL"
                 print(set_color(message, fore="red"), end='')
         else:
             message = f"[{current_time}] 未找到bypass403_url.txt"
             print(set_color(message, fore="red"), end='')
-            # print(Fore.RED + "未找到bypass403_url.txt" + Style.RESET_ALL)
+            # print(Fore.RED + "未找到resources/bypass403_url.txt" + Style.RESET_ALL)
     except Exception as e:
         message = f"[{current_time}] Packer-Fuzzer扫描期间出错: {str(e)}"
         print(set_color(message, fore="red"), end='')
@@ -550,9 +551,9 @@ def subfinder_scan():
     print(set_color(message, fore="blue"))
     
     try:
-        # 检查 bypass403_url.txt 文件是否存在并读取URL
-        if os.path.exists('bypass403_url.txt'):
-            with open('bypass403_url.txt', 'r') as f:
+        # 检查 resources/bypass403_url.txt 文件是否存在并读取URL
+        if os.path.exists('resources/bypass403_url.txt'):
+            with open('resources/bypass403_url.txt', 'r') as f:
                 url = f.read().strip()
 
             if url:
@@ -580,7 +581,7 @@ def subfinder_scan():
                 print(set_color(message, fore="red"))
         else:
             current_time = time.strftime("%H:%M:%S")
-            message = f"[{current_time}] 未找到bypass403_url.txt文件"
+            message = f"[{current_time}] 未找到 /bypass403_url.txt文件"
             print(set_color(message, fore="red"))
             
     except Exception as e:

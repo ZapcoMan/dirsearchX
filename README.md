@@ -120,7 +120,7 @@ python dirsearchX.py -u "http://www.example.com/" --swagger yes
 python dirsearchX.py -u "http://www.example.com/" -d yes
 ```
 
-该模块会自动从 bypass403_url.txt 文件中读取目标域名，并进行子域名扫描。扫描结果将显示发现的子域名及其相关信息。
+该模块会自动从 resources/bypass403_url.txt 文件中读取目标域名，并进行子域名扫描。扫描结果将显示发现的子域名及其相关信息。
 
 ## API 接口扫描指南
 

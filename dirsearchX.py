@@ -557,7 +557,13 @@ def subfinder_scan():
                 url = f.read().strip()
 
             if url:
-                # print(f"")
+                # 移除URL中的协议前缀和末尾斜杠
+                # 这段代码的作用是清理URL字符串，去除常见的协议标识符（如http://, https://）
+                # 以及路径末尾可能存在的斜杠字符，使URL格式更加标准化
+
+                url = url.replace("https://", "").replace("http://", "")
+                url = url.rstrip("/")
+
                 message = f"[{current_time}]扫描目标: {url}"
                 print(set_color(message, fore="blue"))
                 # 导入并调用 subfinder 模块
@@ -581,7 +587,7 @@ def subfinder_scan():
                 print(set_color(message, fore="red"))
         else:
             current_time = time.strftime("%H:%M:%S")
-            message = f"[{current_time}] 未找到 /bypass403_url.txt文件"
+            message = f"[{current_time}] 未找到 resources/bypass403_url.txt文件"
             print(set_color(message, fore="red"))
             
     except Exception as e:

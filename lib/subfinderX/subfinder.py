@@ -13,12 +13,46 @@ from lib.core.data import options
 from lib.view.colors import set_color
 
 
+def remove_locked_files(domain):
+    """
+    删除可能被锁定的输出文件
+    """
+    if not domain:
+        return
+        
+    output_dir = os.path.join(os.path.dirname(__file__), "output")
+    if not os.path.exists(output_dir):
+        return
+        
+    # 生成可能的文件名
+    files_to_remove = [
+        os.path.join(output_dir, f"{domain}.xlsx"),
+        os.path.join(output_dir, f"{domain}_http.xlsx")
+    ]
+    
+    for file_path in files_to_remove:
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+                current_time = time.strftime("%H:%M:%S")
+                print(set_color(f"[{current_time}][+] 已删除可能锁定的文件: {os.path.basename(file_path)}", "green"))
+            except PermissionError:
+                current_time = time.strftime("%H:%M:%S")
+                print(set_color(f"[{current_time}][-] 无法删除文件 {os.path.basename(file_path)}，文件可能正在被使用", "yellow"))
+            except Exception as e:
+                current_time = time.strftime("%H:%M:%S")
+                print(set_color(f"[{current_time}][-] 删除文件 {os.path.basename(file_path)} 时出错: {str(e)}", "red"))
+
+
 def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_data=None,
                   enable_http=False, random_check=False, finger_path="finger.json",
                   next_dict="mini_names.txt"):
     """
     运行 subfinder-x 工具进行子域名爆破
     """
+    # 删除可能被锁定的输出文件
+    remove_locked_files(domain)
+    
     # 构建完整的可执行文件路径
     exe_path = os.path.join(os.path.dirname(__file__), "subfinder-x.exe")
     # 设置工作目录为subfinderX目录

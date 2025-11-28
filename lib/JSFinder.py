@@ -10,7 +10,44 @@ from concurrent.futures import ThreadPoolExecutor
 from lib.view.terminal import output
 from lib.view.colors import set_color
 
-# Regular expression comes from https://github.com/GerbenJavado/LinkFinder
+# 敏感信息正则表达式模式
+SENSITIVE_PATTERNS = {
+    'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+    'phone': r'(?:\+?86)?1(?:3\d{3}|5[^4\D]\d{7}|8\d{9}|9[0-9]\d{8}|7[0-9]\d{8})',
+    'id_card': r'[1-9]\d{5}(?:1[89]|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dXx]',
+    'api_key': r'(?:api[-_]key|api[key]|access[-_]key|access[key])\s*[=:]\s*["\'][^"\']*["\']',
+    'secret': r'(?:secret|secret[-_]key|app[-_]secret)\s*[=:]\s*["\'][^"\']*["\']',
+    'password': r'(?:password|passwd|pwd)\s*[=:]\s*["\'][^"\']*["\']',
+    'token': r'(?:token|auth[-_]token|access[-_]token)\s*[=:]\s*["\'][^"\']*["\']',
+    'jdbc_url': r'jdbc:(?:mysql|postgresql|oracle|sqlserver)://[^\s"\']+',
+    'access_key': r'(?:access[-_]key|accesskey)\s*[=:]\s*["\'][^"\']*["\']',
+    'private_key': r'-----BEGIN (?:RSA |DSA |EC )?PRIVATE KEY-----[^-]*-----END (?:RSA |DSA |EC )?PRIVATE KEY-----',
+    'aws_key': r'(?:ASIA|AKIA)[A-Z0-9]{16}',
+    ' sensitive_url': r'(?:admin|login|api|config)[^.]*\.[^.]*\.(?:php|jsp|asp|aspx)',
+}
+
+def extract_sensitive_info(js_content):
+    """
+    从JavaScript内容中提取敏感信息
+    
+    Args:
+        js_content (str): JavaScript文件内容
+        
+    Returns:
+        dict: 包含各类敏感信息的字典
+    """
+    sensitive_info = {}
+    
+    for pattern_name, pattern in SENSITIVE_PATTERNS.items():
+        matches = re.findall(pattern, js_content, re.IGNORECASE)
+        if matches:
+            # 去重
+            unique_matches = list(set(matches))
+            if unique_matches:
+                sensitive_info[pattern_name] = unique_matches
+    
+    return sensitive_info
+
 def extract_URL(JS):
 	"""
 	从JavaScript代码中提取URL链接
@@ -160,9 +197,31 @@ def find_by_url(url, js = False):
 			script_src = html_script.get("src")
 			if script_src == None:
 				script_temp += html_script.get_text() + "\n"
+				# 检测内联脚本中的敏感信息
+				sensitive_info = extract_sensitive_info(html_script.get_text())
+				if sensitive_info:
+					current_time = time.strftime("%H:%M:%S")
+					message = f"[{current_time}]  在内联脚本中发现敏感信息:"
+					output.new_line(set_color(message, fore="red"))
+					for info_type, values in sensitive_info.items():
+						for value in values:
+							message = f"[{current_time}]    {info_type}: {value}"
+							output.new_line(set_color(message, fore="red"))
 			else:
 				purl = process_url(url, script_src)
-				script_array[purl] = Extract_html(purl)
+				script_content = Extract_html(purl)
+				script_array[purl] = script_content
+				# 检测外部脚本文件中的敏感信息
+				if script_content:
+					sensitive_info = extract_sensitive_info(script_content)
+					if sensitive_info:
+						current_time = time.strftime("%H:%M:%S")
+						message = f"[{current_time}]  在外部脚本 {purl} 中发现敏感信息:"
+						output.new_line(set_color(message, fore="red"))
+						for info_type, values in sensitive_info.items():
+							for value in values:
+								message = f"[{current_time}]    {info_type}: {value}"
+								output.new_line(set_color(message, fore="red"))
 		script_array[url] = script_temp
 		allurls = []
 		for script in script_array:
@@ -284,6 +343,22 @@ def find_by_file(file_path, js=False):
 			temp_urls = find_by_url(link)
 		else:
 			temp_urls = find_by_url(link, js=True)
+			# 如果是JS文件，直接检测敏感信息
+			if temp_urls is not None:
+				try:
+					js_content = Extract_html(link)
+					if js_content:
+						sensitive_info = extract_sensitive_info(js_content)
+						if sensitive_info:
+							current_time = time.strftime("%H:%M:%S")
+							message = f"[{current_time}]  在JS文件 {link} 中发现敏感信息:"
+							output.new_line(set_color(message, fore="red"))
+							for info_type, values in sensitive_info.items():
+								for value in values:
+									message = f"[{current_time}]    {info_type}: {value}"
+									output.new_line(set_color(message, fore="red"))
+				except Exception as e:
+					pass
 		if temp_urls == None: continue
 		current_time = time.strftime("%H:%M:%S")
 		message = f"[{current_time}]  " + str(i) + " Find " + str(len(temp_urls)) + " URL in " + link
@@ -408,3 +483,41 @@ def giveresult(urls, domian):
 		current_time = time.strftime("%H:%M:%S")
 		message = f"[{current_time}]  " + subdomain
 		output.new_line(set_color(message, fore="blue"))
+
+# 添加敏感信息保存功能
+def save_sensitive_info(sensitive_data, domain):
+    """
+    保存敏感信息到文件
+    
+    Args:
+        sensitive_data (dict): 敏感信息字典
+        domain (str): 域名
+    """
+    if not sensitive_data:
+        return
+        
+    try:
+        parsed_url = urlparse(domain)
+        domain_name = parsed_url.netloc
+        safe_domain_name = domain_name.replace('.', '_').replace(':', '_')
+        
+        # 保存敏感信息到文件
+        with open(f"reports/{safe_domain_name}_sensitive_info.txt", 'w', encoding='utf-8') as f:
+            f.write(f"敏感信息检测报告\n")
+            f.write(f"目标域名: {domain}\n")
+            f.write(f"检测时间: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+            f.write("=" * 50 + "\n\n")
+            
+            for info_type, values in sensitive_data.items():
+                f.write(f"{info_type.upper()}:\n")
+                for value in values:
+                    f.write(f"  - {value}\n")
+                f.write("\n")
+                
+        current_time = time.strftime("%H:%M:%S")
+        message = f"[{current_time}]  敏感信息已保存到 reports/{safe_domain_name}_sensitive_info.txt"
+        output.new_line(set_color(message, fore="red"))
+    except Exception as e:
+        current_time = time.strftime("%H:%M:%S")
+        message = f"[{current_time}]  保存敏感信息时出错: {str(e)}"
+        output.new_line(set_color(message, fore="red"))

@@ -62,13 +62,13 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
 
     # 使用 dirsearch 的日志模块替代 print，统一颜色和风格
     current_time = time.strftime("%H:%M:%S")
-    print(set_color(f"[{current_time}][+] ", "green") + "执行命令: %s" % " ".join(cmd))
+    print(set_color(f"[{current_time}][+] " + "执行命令: %s" % " ".join(cmd), "green"))
     
     try:
         # 明确指定编码为 utf-8 来避免 gbk 解码错误
         # 在subfinderX目录中执行命令，确保能正确访问finger.json和dict目录
-        print(set_color(f"[{current_time}][+] ", "green") + "开始执行SubFinder扫描，请稍候...")
-        print(set_color(f"[{current_time}][+] ", "green") + "注意：子域名扫描可能需要一些时间，请耐心等待...")
+        print(set_color(f"[{current_time}][+] 开始执行SubFinder扫描，请稍候...", "green"))
+        print(set_color(f"[{current_time}][+] 注意：子域名扫描可能需要一些时间，请耐心等待... ", "green"))
 
         # 使用Popen代替run以便更好地控制进程
         process = subprocess.Popen(cmd, cwd=work_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
@@ -83,14 +83,14 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
             current_time = time.time()
             if current_time - last_check >= check_interval:
                 elapsed_minutes = int((current_time - start_time) / 60)
-                print(set_color(f"[{time.strftime('%H:%M:%S')}][+] ", "green") + f"扫描已持续 {elapsed_minutes} 分钟，请耐心等待...")
+                print(set_color(f"[{time.strftime('%H:%M:%S')}][+] 扫描已持续 {elapsed_minutes} 分钟，请耐心等待...", "green"))
                 last_check = current_time
             time.sleep(10)  # 每10秒检查一次进程状态
 
         # 获取最终结果
         stdout, stderr = process.communicate()
         if process.returncode == 0:
-            print(set_color(f"[{time.strftime('%H:%M:%S')}][+] ", "green") + "扫描成功完成")
+            print(set_color(f"[{time.strftime('%H:%M:%S')}][+] 扫描成功完成", "green"))
             if stdout:
                 # 统一输出格式，使用 dirsearch 的输出风格
                 for line in stdout.strip().split('\n'):
@@ -98,7 +98,7 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
                         current_time = time.strftime("%H:%M:%S")
                         print(set_color(f"[{current_time}]     " + line.strip(), "green"))
         else:
-            print(set_color(f"[{time.strftime('%H:%M:%S')}][-] ", "red") + "扫描过程中出现错误")
+            print(set_color(f"[{time.strftime('%H:%M:%S')}][-] 扫描过程中出现错误", "red"))
             if stderr:
                 # 错误信息也使用统一的日志格式
                 for line in stderr.strip().split('\n'):
@@ -108,10 +108,10 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
             
     except FileNotFoundError:
         current_time = time.strftime("%H:%M:%S")
-        print(set_color(f"[{current_time}][-] ", "red") + "未找到 subfinder-x.exe 可执行文件，请确认路径是否正确")
+        print(set_color(f"[{current_time}][-] 未找到 subfinder-x.exe 可执行文件，请确认路径是否正确", "red"))
     except Exception as e:
         current_time = time.strftime("%H:%M:%S")
-        print(set_color(f"[{current_time}][-] ", "red") + f"未知错误: {str(e)}")
+        print(set_color(f"[{current_time}][-] 未知错误: {str(e)}", "red"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Subfinder-X 子域名扫描工具调用脚本")

@@ -636,9 +636,6 @@ def run():
     print(set_color(f"[{current_time}] Swagger接口扫描 ", fore="blue"))
     swagger_scan()
 
-
-
-
 if __name__ == "__main__":
     q = queue.Queue()
     run()

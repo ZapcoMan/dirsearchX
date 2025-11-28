@@ -10,21 +10,8 @@ from concurrent.futures import ThreadPoolExecutor
 from lib.view.terminal import output
 from lib.view.colors import set_color
 
-# 敏感信息正则表达式模式
-SENSITIVE_PATTERNS = {
-    'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-    'phone': r'(?:\+?86)?1(?:3\d{3}|5[^4\D]\d{7}|8\d{9}|9[0-9]\d{8}|7[0-9]\d{8})',
-    'id_card': r'[1-9]\d{5}(?:1[89]|20)\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])\d{3}[\dXx]',
-    'api_key': r'(?:api[-_]key|api[key]|access[-_]key|access[key])\s*[=:]\s*["\'][^"\']*["\']',
-    'secret': r'(?:secret|secret[-_]key|app[-_]secret)\s*[=:]\s*["\'][^"\']*["\']',
-    'password': r'(?:password|passwd|pwd)\s*[=:]\s*["\'][^"\']*["\']',
-    'token': r'(?:token|auth[-_]token|access[-_]token)\s*[=:]\s*["\'][^"\']*["\']',
-    'jdbc_url': r'jdbc:(?:mysql|postgresql|oracle|sqlserver)://[^\s"\']+',
-    'access_key': r'(?:access[-_]key|accesskey)\s*[=:]\s*["\'][^"\']*["\']',
-    'private_key': r'-----BEGIN (?:RSA |DSA |EC )?PRIVATE KEY-----[^-]*-----END (?:RSA |DSA |EC )?PRIVATE KEY-----',
-    'aws_key': r'(?:ASIA|AKIA)[A-Z0-9]{16}',
-    ' sensitive_url': r'(?:admin|login|api|config)[^.]*\.[^.]*\.(?:php|jsp|asp|aspx)',
-}
+# 从单独的文件导入敏感信息正则表达式模式
+from lib.core.sensitive_patterns import SENSITIVE_PATTERNS
 
 def extract_sensitive_info(js_content):
     """

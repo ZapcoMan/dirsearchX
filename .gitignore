@@ -171,3 +171,10 @@ lib/Packer-Fuzzer/reports/*.pdf
 lib/Packer-Fuzzer/reports/*.json
 lib/Packer-Fuzzer/reports/*.txt
 lib/Packer-Fuzzer/reports/*.log
+reports/*.txt
+reports/*.csv
+reports/*.docx
+reports/*.html
+reports/*.pdf
+reports/*.json
+reports/*.log

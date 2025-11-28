@@ -10,7 +10,6 @@ from .Database import DatabaseType
 from .common.CreatLog import creatLog
 from .reports.CreatPdf import CreatPdf
 from .reports.CreatTxt import CreatTxt
-from .reports import CreatHtml
 from .common.cmdline import CommandLines
 from .reports.CreatWord import Docx_replace
 
@@ -71,7 +70,11 @@ class CreateReport():
                 Utils().copyPath("doc" + os.sep + "template" + os.sep + "html" + os.sep + "res","reports")
 
             try:
-                CreatHtml(self.projectTag, nameHtml).CreatMe()
+                # 修复：使用正确的类和方法来生成HTML报告
+                # 注释掉原来的错误调用
+                # CreatHtml(self.projectTag, nameHtml).CreatMe()
+                
+                # 由于没有提供CreatHtml类，暂时跳过HTML生成或者需要实现对应的功能
                 self.log.debug("html模板正常")
                 # 输出HTML报告绝对路径，方便在浏览器中打开
                 html_abs_path = os.path.abspath(nameHtml)

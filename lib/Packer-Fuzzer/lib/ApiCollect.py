@@ -3,11 +3,11 @@
 
 import os,re
 from urllib.parse import urlparse
-from lib.common import readConfig
-from lib.common.utils import Utils
-from lib.Database import DatabaseType
-from lib.common.CreatLog import creatLog
-from lib.common.cmdline import CommandLines
+from .common import readConfig
+from .common.utils import Utils
+from .Database import DatabaseType
+from .common.CreatLog import creatLog
+from .common.cmdline import CommandLines
 
 
 class Apicollect():

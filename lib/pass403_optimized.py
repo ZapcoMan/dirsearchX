@@ -432,7 +432,7 @@ class OptimizedProgram():
         max_workers (int): 最大工作线程数，默认为20
     """
 
-    def __init__(self, urllist, dirlist, max_workers=20):
+    def __init__(self, urllist, dirlist, max_workers=40):
         self.urllist = urllist
         self.dirlist = dirlist
         self.max_workers = max_workers

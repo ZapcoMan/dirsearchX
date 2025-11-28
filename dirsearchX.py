@@ -557,6 +557,8 @@ def subfinder_scan():
                 url = f.read().strip()
 
             if url:
+                url = url.replace("https://", "").replace("http://", "")
+                url = url.rstrip("/")
                 message = f"[{current_time}]扫描目标: {url}"
                 print(set_color(message, fore="blue"))
                 # 导入并调用 subfinder 模块
@@ -631,6 +633,7 @@ def run():
     subfinder_scan()
 
     # 执行Swagger接口扫描
+    print(set_color(f"[{current_time}] Swagger接口扫描 ", fore="blue"))
     swagger_scan()
 
 

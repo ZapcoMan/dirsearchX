@@ -67,23 +67,45 @@ def run_subfinder(domain=None, file=None, deep=5, dict_file="test.txt", fuzz_dat
     try:
         # 明确指定编码为 utf-8 来避免 gbk 解码错误
         # 在subfinderX目录中执行命令，确保能正确访问finger.json和dict目录
-        result = subprocess.run(cmd, cwd=work_dir, capture_output=True, text=True, check=True, encoding='utf-8')
-        current_time = time.strftime("%H:%M:%S")
-        print(set_color(f"[{current_time}][+] ", "green") + "扫描成功完成")
-        if result.stdout:
-            # 统一输出格式，使用 dirsearch 的输出风格
-            for line in result.stdout.strip().split('\n'):
-                if line.strip():
-                    current_time = time.strftime("%H:%M:%S")
-                    print(set_color(f"[{current_time}]     " + line.strip(), "green"))
-    except subprocess.CalledProcessError as e:
-        print(set_color(f"[{current_time}][-] ", "red") + "扫描过程中出现错误")
-        if e.stderr:
-            # 错误信息也使用统一的日志格式
-            for line in e.stderr.strip().split('\n'):
-                if line.strip():
-                    current_time = time.strftime("%H:%M:%S")
-                    print(set_color(f"[{current_time}]     " + line.strip(), "red"))
+        print(set_color(f"[{current_time}][+] ", "green") + "开始执行SubFinder扫描，请稍候...")
+        print(set_color(f"[{current_time}][+] ", "green") + "注意：子域名扫描可能需要一些时间，请耐心等待...")
+
+        # 使用Popen代替run以便更好地控制进程
+        process = subprocess.Popen(cmd, cwd=work_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                   encoding='utf-8')
+
+        # 定时提示机制
+        start_time = time.time()
+        check_interval = 300  # 每5分钟检查一次
+        last_check = start_time
+
+        while process.poll() is None:  # 进程仍在运行
+            current_time = time.time()
+            if current_time - last_check >= check_interval:
+                elapsed_minutes = int((current_time - start_time) / 60)
+                print(set_color(f"[{time.strftime('%H:%M:%S')}][+] ", "green") + f"扫描已持续 {elapsed_minutes} 分钟，请耐心等待...")
+                last_check = current_time
+            time.sleep(10)  # 每10秒检查一次进程状态
+
+        # 获取最终结果
+        stdout, stderr = process.communicate()
+        if process.returncode == 0:
+            print(set_color(f"[{time.strftime('%H:%M:%S')}][+] ", "green") + "扫描成功完成")
+            if stdout:
+                # 统一输出格式，使用 dirsearch 的输出风格
+                for line in stdout.strip().split('\n'):
+                    if line.strip():
+                        current_time = time.strftime("%H:%M:%S")
+                        print(set_color(f"[{current_time}]     " + line.strip(), "green"))
+        else:
+            print(set_color(f"[{time.strftime('%H:%M:%S')}][-] ", "red") + "扫描过程中出现错误")
+            if stderr:
+                # 错误信息也使用统一的日志格式
+                for line in stderr.strip().split('\n'):
+                    if line.strip():
+                        current_time = time.strftime("%H:%M:%S")
+                        print(set_color(f"[{current_time}]     " + line.strip(), "red"))
+            
     except FileNotFoundError:
         current_time = time.strftime("%H:%M:%S")
         print(set_color(f"[{current_time}][-] ", "red") + "未找到 subfinder-x.exe 可执行文件，请确认路径是否正确")
